@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
 import './globals.css'
+import Menu from './components/system/Menu'
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://centraldocs.com'),
@@ -53,7 +54,11 @@ type Props = {
 export default function RootLayout({ children }: Props) {
     return (
         <html lang="pt-BR">
-            <body>{children}</body>
+            <body>
+                <Menu />
+
+                {children}
+            </body>
         </html>
     )
 }

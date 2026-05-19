@@ -26,9 +26,12 @@ export default function Menu() {
                 </Link>
 
                 <div className="flex items-center gap-3">
-                    <button className="hidden rounded-md border border-white/10 bg-container-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10 md:block">
+                    <Link
+                        href="/tools"
+                        className="hidden rounded-md border border-white/10 bg-container-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10 md:block"
+                    >
                         Ferramentas
-                    </button>
+                    </Link>
 
                     <button className="flex gap-2 rounded-md border border-white/10 bg-container-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10">
                         <Icon icon="logos:google-icon" className="text-xl" />
