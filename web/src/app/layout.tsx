@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+import { Analytics } from '@vercel/analytics/next'
 
 import './globals.css'
 
@@ -53,7 +54,10 @@ type Props = {
 export default function RootLayout({ children }: Props) {
     return (
         <html lang="pt-BR">
-            <body>{children}</body>
+            <body>
+                {children}
+                <Analytics />
+            </body>
         </html>
     )
 }
