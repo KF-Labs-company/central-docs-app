@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Icon } from '@iconify/react'
 import Menu from './components/system/Menu'
+import CardGrid from './components/system/CardGrid'
 
 export const metadata: Metadata = {
     title: 'Central DOCS',
@@ -14,23 +15,47 @@ const tools = [
         title: 'PDF',
         description: 'Comprima, junte, divida e organize arquivos PDF.',
     },
-
     {
         icon: 'solar:gallery-bold',
         title: 'Images',
         description: 'Converta, comprima e otimize imagens online.',
     },
-
     {
         icon: 'solar:video-frame-bold',
         title: 'Videos',
         description: 'Converta vídeos, compacte arquivos e extraia áudio.',
     },
-
     {
         icon: 'solar:music-note-bold',
         title: 'Audios',
         description: 'Converta áudios, remova ruídos e compacte arquivos.',
+    },
+]
+
+const list = [
+    {
+        icon: 'material-symbols-light:folder-limited',
+        title: 'Limite diário',
+        description:
+            ' Usuários sem login podem utilizar até 3 processamentos gratuitos por dia.',
+    },
+    {
+        icon: 'ri:google-fill',
+        title: 'Conta Google',
+        description:
+            'Entre com sua conta Google para desbloquear recursos ilimitados e futuras funcionalidades.',
+    },
+    {
+        icon: 'carbon:security',
+        title: 'Segurança',
+        description:
+            'Seus arquivos são processados com segurança e não permanecem armazenados após o uso.',
+    },
+    {
+        icon: 'material-symbols:check-rounded',
+        title: 'Gratuito',
+        description:
+            'As principais ferramentas da plataforma podem ser utilizadas gratuitamente.',
     },
 ]
 
@@ -129,16 +154,18 @@ export default function HomePage() {
                                             hover:bg-blue-500/4
                                         "
                                     >
-                                        <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10">
-                                            <Icon
-                                                icon={tool.icon}
-                                                className="text-3xl text-blue-400"
-                                            />
-                                        </div>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10">
+                                                <Icon
+                                                    icon={tool.icon}
+                                                    className="text-3xl text-blue-400"
+                                                />
+                                            </div>
 
-                                        <h2 className="mb-3 text-2xl font-bold text-white">
-                                            {tool.title}
-                                        </h2>
+                                            <h2 className="text-2xl font-bold text-white">
+                                                {tool.title}
+                                            </h2>
+                                        </div>
 
                                         <p className="leading-7 text-slate-400">
                                             {tool.description}
@@ -167,39 +194,7 @@ export default function HomePage() {
                         </p>
                     </div>
 
-                    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-                        {tools.map((tool) => (
-                            <article
-                                key={tool.title}
-                                className="
-                                    rounded-3xl
-                                    border
-                                    border-white/10
-                                    bg-container-primary
-                                    p-7
-                                    backdrop-blur-xl
-                                    transition
-                                    hover:border-blue-500/30
-                                    hover:bg-blue-500/3
-                                "
-                            >
-                                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10">
-                                    <Icon
-                                        icon={tool.icon}
-                                        className="text-3xl text-blue-400"
-                                    />
-                                </div>
-
-                                <h3 className="mb-3 text-2xl font-bold text-white">
-                                    {tool.title}
-                                </h3>
-
-                                <p className="leading-7 text-slate-400">
-                                    {tool.description}
-                                </p>
-                            </article>
-                        ))}
-                    </div>
+                    <CardGrid list={tools} />
                 </section>
 
                 <section className="rounded-md border border-white/10 bg-white/3 p-10 backdrop-blur-xl">
@@ -267,127 +262,7 @@ export default function HomePage() {
                         </p>
                     </div>
 
-                    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-                        <article
-                            className="
-                rounded-3xl
-                border
-                border-white/10
-                bg-container-primary
-                p-7
-                backdrop-blur-xl
-                transition
-                hover:border-blue-500/30
-                hover:bg-blue-500/3
-            "
-                        >
-                            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10">
-                                <Icon
-                                    icon="material-symbols-light:folder-limited"
-                                    className="text-3xl text-blue-400"
-                                />
-                            </div>
-
-                            <h3 className="mb-3 text-2xl font-bold text-white">
-                                Limite diário
-                            </h3>
-
-                            <p className="leading-7 text-slate-400">
-                                Usuários sem login podem utilizar até 3
-                                processamentos gratuitos por dia.
-                            </p>
-                        </article>
-
-                        <article
-                            className="
-                rounded-3xl
-                border
-                border-white/10
-                bg-container-primary
-                p-7
-                backdrop-blur-xl
-                transition
-                hover:border-blue-500/30
-                hover:bg-blue-500/3
-            "
-                        >
-                            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10">
-                                <Icon
-                                    icon="ri:google-fill"
-                                    className="text-3xl text-blue-400"
-                                />
-                            </div>
-
-                            <h3 className="mb-3 text-2xl font-bold text-white">
-                                Conta Google
-                            </h3>
-
-                            <p className="leading-7 text-slate-400">
-                                Entre com sua conta Google para desbloquear
-                                recursos ilimitados e futuras funcionalidades.
-                            </p>
-                        </article>
-
-                        <article
-                            className="
-                rounded-3xl
-                border
-                border-white/10
-                bg-container-primary
-                p-7
-                backdrop-blur-xl
-                transition
-                hover:border-blue-500/30
-                hover:bg-blue-500/3
-            "
-                        >
-                            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10">
-                                <Icon
-                                    icon="carbon:security"
-                                    className="text-3xl text-blue-400"
-                                />
-                            </div>
-
-                            <h3 className="mb-3 text-2xl font-bold text-white">
-                                Segurança
-                            </h3>
-
-                            <p className="leading-7 text-slate-400">
-                                Seus arquivos são processados com segurança e
-                                não permanecem armazenados após o uso.
-                            </p>
-                        </article>
-
-                        <article
-                            className="
-                rounded-3xl
-                border
-                border-white/10
-                bg-container-primary
-                p-7
-                backdrop-blur-xl
-                transition
-                hover:border-blue-500/30
-                hover:bg-blue-500/3
-            "
-                        >
-                            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10">
-                                <Icon
-                                    icon="material-symbols:check-rounded"
-                                    className="text-3xl text-blue-400"
-                                />
-                            </div>
-
-                            <h3 className="mb-3 text-2xl font-bold text-white">
-                                Gratuito
-                            </h3>
-
-                            <p className="leading-7 text-slate-400">
-                                As principais ferramentas da plataforma podem
-                                ser utilizadas gratuitamente.
-                            </p>
-                        </article>
-                    </div>
+                    <CardGrid list={list} />
                 </section>
 
                 <section className="relative overflow-hidden rounded-4xl border border-white/10 bg-white/3 p-10 backdrop-blur-xl">
