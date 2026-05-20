@@ -8,7 +8,7 @@ export class GoogleAuthService {
     async execute(token: string) {
         const ticket = await client.verifyIdToken({
             idToken: token,
-            audience: process.env.GOOGLE_CLIENT_ID,
+            audience: process.env.GOOGLE_CLIENT_ID!,
         })
 
         const payload = ticket.getPayload()
