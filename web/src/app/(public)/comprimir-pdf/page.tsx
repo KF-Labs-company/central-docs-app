@@ -1,8 +1,9 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { PDFDocument } from 'pdf-lib'
+import { useEffect, useMemo, useState } from 'react'
 import { Icon } from '@iconify/react'
+
+import { useAuth } from '@/app/contexts/AuthContext'
 
 type ResultFile = {
     blob: Blob
@@ -11,6 +12,8 @@ type ResultFile = {
 }
 
 export default function CompressPDFPage() {
+    const { isAuthenticated } = useAuth()
+
     const [file, setFile] = useState<File | null>(null)
     const [loading, setLoading] = useState(false)
     const [result, setResult] = useState<ResultFile | null>(null)
@@ -18,7 +21,6 @@ export default function CompressPDFPage() {
 
     const formatSize = (bytes: number) => {
         if (!bytes) return '0 KB'
-
         return (bytes / 1024 / 1024).toFixed(2) + ' MB'
     }
 
@@ -27,7 +29,6 @@ export default function CompressPDFPage() {
 
     const percent = useMemo(() => {
         if (!result || !originalSize) return 0
-
         return ((originalSize - finalSize) / originalSize) * 100
     }, [originalSize, finalSize, result])
 
@@ -61,32 +62,50 @@ export default function CompressPDFPage() {
     const handleCompress = async () => {
         if (!file) return
 
-        setLoading(true)
+        try {
+            setLoading(true)
 
-        const arrayBuffer = await file.arrayBuffer()
+            const formData = new FormData()
+            formData.append('file', file)
 
-        const pdfDoc = await PDFDocument.load(arrayBuffer)
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/pdf/compress`,
+                {
+                    method: 'POST',
+                    body: formData,
+                }
+            )
 
-        const compressedPdf = await pdfDoc.save()
+            // 🔴 REGRA REAL VEM DO BACKEND
+            if (response.status === 403) {
+                const data = await response.json()
 
-        const buffer = compressedPdf.buffer.slice(
-            compressedPdf.byteOffset,
-            compressedPdf.byteOffset + compressedPdf.byteLength
-        ) as ArrayBuffer
+                if (data.error === 'DAILY_LIMIT_REACHED') {
+                    alert(
+                        'Você atingiu o limite diário de compressões. Faça login para continuar.'
+                    )
+                }
 
-        const blob = new Blob([buffer], {
-            type: 'application/pdf',
-        })
+                return
+            }
 
-        const url = URL.createObjectURL(blob)
+            if (!response.ok) {
+                throw new Error('Erro ao comprimir PDF')
+            }
 
-        setResult({
-            blob,
-            url,
-            size: blob.size,
-        })
+            const blob = await response.blob()
+            const url = URL.createObjectURL(blob)
 
-        setLoading(false)
+            setResult({
+                blob,
+                url,
+                size: blob.size,
+            })
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
     }
 
     const reset = () => {
@@ -104,6 +123,20 @@ export default function CompressPDFPage() {
                     Reduza o tamanho dos seus PDFs de forma rápida e gratuita.
                 </p>
             </div>
+
+            {/* UX de paywall */}
+            {!isAuthenticated && (
+                <div className="rounded-2xl border border-yellow-500/20 bg-yellow-500/10 p-4">
+                    <p className="font-medium text-yellow-300">
+                        Uso gratuito diário
+                    </p>
+
+                    <p className="mt-1 text-sm text-yellow-100/70">
+                        Você pode usar esta ferramenta algumas vezes por dia.
+                        Faça login para uso ilimitado.
+                    </p>
+                </div>
+            )}
 
             <div className="-mb-6 text-sm text-slate-400">
                 {result ? (
@@ -152,8 +185,7 @@ export default function CompressPDFPage() {
                                 </p>
 
                                 <p className="text-sm text-slate-400">
-                                    Arraste seu arquivo aqui ou selecione do
-                                    computador
+                                    Arraste ou selecione um arquivo
                                 </p>
                             </div>
                         )}
@@ -172,11 +204,7 @@ export default function CompressPDFPage() {
             {result && (
                 <div className="relative flex flex-col gap-6 rounded-3xl border border-white/10 bg-white/5 p-8">
                     <div
-                        className={`
-                            ${label.color}
-                            absolute -right-3 -top-3
-                            rounded-xl px-4 py-2 shadow-2xl
-                        `}
+                        className={`${label.color} absolute -right-3 -top-3 rounded-xl px-4 py-2 shadow-2xl`}
                     >
                         <p className="text-sm font-bold text-black">
                             {label.label}
@@ -195,55 +223,31 @@ export default function CompressPDFPage() {
 
                     <div className="grid gap-4 md:grid-cols-3">
                         <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                            <p className="mb-1 text-sm text-slate-400">
-                                Original
-                            </p>
-
+                            <p className="text-sm text-slate-400">Original</p>
                             <p className="text-xl font-bold text-white">
                                 {formatSize(originalSize)}
                             </p>
                         </div>
 
                         <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                            <p className="mb-1 text-sm text-slate-400">Final</p>
-
+                            <p className="text-sm text-slate-400">Final</p>
                             <p className="text-xl font-bold text-white">
                                 {formatSize(finalSize)}
                             </p>
                         </div>
 
                         <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                            <p className="mb-1 text-sm text-slate-400">
-                                Redução
-                            </p>
-
+                            <p className="text-sm text-slate-400">Redução</p>
                             <p className="text-xl font-bold text-green-400">
                                 {percent.toFixed(1)}%
                             </p>
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm text-slate-400">
-                            <span>Nível de compressão</span>
-
-                            <span>{percent.toFixed(1)}%</span>
-                        </div>
-
-                        <div className="h-3 w-full overflow-hidden rounded-full bg-white/10">
-                            <div
-                                className="h-full rounded-full bg-green-500 transition-all"
-                                style={{
-                                    width: `${Math.max(percent, 2)}%`,
-                                }}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex gap-3">
                         <button
                             onClick={reset}
-                            className="rounded-xl bg-slate-600 px-5 py-3 font-semibold transition hover:bg-slate-700"
+                            className="rounded-xl bg-slate-600 px-5 py-3 font-semibold hover:bg-slate-700"
                         >
                             Novo arquivo
                         </button>
@@ -251,31 +255,22 @@ export default function CompressPDFPage() {
                         <a
                             href={result.url}
                             download={`compressed-${file?.name}`}
-                            className="rounded-xl bg-green-600 px-5 py-3 font-semibold transition hover:bg-green-700
-                            "
+                            className="rounded-xl bg-green-600 px-5 py-3 font-semibold hover:bg-green-700"
                         >
                             Baixar PDF
                         </a>
                     </div>
 
                     <div className="border-t border-white/10 pt-6">
-                        <div className="mb-4">
-                            <p className="font-semibold text-white">
-                                Avalie sua experiência
-                            </p>
+                        <p className="mb-3 font-semibold">
+                            Avalie sua experiência
+                        </p>
 
-                            <p className="text-sm text-slate-400">
-                                Seu feedback ajuda a melhorar nossas
-                                ferramentas.
-                            </p>
-                        </div>
-
-                        <div className="flex items-center gap-2">
+                        <div className="flex gap-2">
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <button
                                     key={star}
                                     onClick={() => setRating(star)}
-                                    className="transition hover:scale-110"
                                 >
                                     <Icon
                                         icon={
@@ -283,22 +278,19 @@ export default function CompressPDFPage() {
                                                 ? 'material-symbols:star-rounded'
                                                 : 'material-symbols:star-outline-rounded'
                                         }
-                                        className={`
-                                            text-4xl
-                                            ${
-                                                rating >= star
-                                                    ? 'text-yellow-400'
-                                                    : 'text-slate-600'
-                                            }
-                                        `}
+                                        className={`text-4xl ${
+                                            rating >= star
+                                                ? 'text-yellow-400'
+                                                : 'text-slate-600'
+                                        }`}
                                     />
                                 </button>
                             ))}
                         </div>
 
                         {rating > 0 && (
-                            <p className="mt-4 text-sm text-green-400">
-                                Obrigado pela sua avaliação!
+                            <p className="mt-3 text-sm text-green-400">
+                                Obrigado pela avaliação!
                             </p>
                         )}
                     </div>

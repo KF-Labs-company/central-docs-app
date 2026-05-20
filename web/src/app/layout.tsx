@@ -2,10 +2,12 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
 import './globals.css'
+
 import Menu from './components/system/Menu'
+import Providers from './providers'
 
 export const metadata: Metadata = {
-    metadataBase: new URL('https://centraldocs.com'),
+    metadataBase: new URL('https://central-docs-app.vercel.app'),
 
     title: {
         default: 'Central DOCS',
@@ -55,9 +57,11 @@ export default function RootLayout({ children }: Props) {
     return (
         <html lang="pt-BR">
             <body>
-                <Menu />
+                <Providers>
+                    <Menu />
 
-                {children}
+                    {children}
+                </Providers>
             </body>
         </html>
     )
