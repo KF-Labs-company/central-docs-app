@@ -60,7 +60,6 @@ export default function RootLayout({ children }: Props) {
             <body>
                 <Providers>
                     <Menu />
-                    {children}
 
                     <main className="flex-1">{children}</main>
 
