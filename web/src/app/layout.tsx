@@ -5,6 +5,7 @@ import './globals.css'
 
 import Menu from './components/system/Menu'
 import Providers from './providers'
+import { Footer } from './components/system/Footer'
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://central-docs-app.vercel.app'),
@@ -60,6 +61,10 @@ export default function RootLayout({ children }: Props) {
                 <Providers>
                     <Menu />
                     {children}
+
+                    <main className="flex-1">{children}</main>
+
+                    <Footer />
                 </Providers>
             </body>
         </html>

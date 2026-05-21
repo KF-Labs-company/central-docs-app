@@ -2,15 +2,10 @@
 
 @theme {
     --color-background: #070b14;
-
     --color-container-primary: rgba(255, 255, 255, 0.03);
-
     --color-container-secondary: rgba(255, 255, 255, 0.05);
-
     --color-border-primary: rgba(255, 255, 255, 0.08);
-
     --color-text-primary: #ffffff;
-
     --color-text-secondary: #94a3b8;
 }
 
@@ -29,6 +24,8 @@
     body {
         min-height: 100vh;
         overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
 
         background:
             radial-gradient(
@@ -76,5 +73,11 @@
     a {
         text-decoration: none;
         color: inherit;
+    }
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
     }
 }

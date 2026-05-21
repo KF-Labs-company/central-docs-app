@@ -61,7 +61,7 @@ const list = [
 
 export default function HomePage() {
     return (
-        <main className="mx-auto flex w-full max-w-7xl flex-col gap-28 px-5 py-10">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-28 px-5 py-10">
             <section className="relative overflow-hidden rounded-md border border-white/10 bg-linear-to-br from-blue-500/10 to-cyan-500/5 p-8 shadow-[0_0_120px_rgba(59,130,246,0.12)] lg:p-14">
                 <div className="grid items-center gap-14 lg:grid-cols-2">
                     <div className="flex flex-col gap-8">
@@ -85,15 +85,11 @@ export default function HomePage() {
                         </div>
 
                         <div className="flex flex-wrap gap-4">
-                            <button className="rounded-2xl bg-blue-500 px-7 py-4 font-semibold text-white shadow-[0_0_40px_rgba(59,130,246,0.4)] transition hover:scale-[1.02]">
-                                Começar agora
-                            </button>
-
                             <Link
-                                href="/tools"
-                                className="rounded-2xl border border-white/10 bg-white/5 px-7 py-4 font-semibold text-white transition hover:bg-white/10"
+                                href="/ferramentas"
+                                className="rounded-2xl bg-blue-500 px-7 py-4 font-semibold text-white shadow-[0_0_40px_rgba(59,130,246,0.4)] transition hover:scale-[1.02]"
                             >
-                                Explorar ferramentas
+                                Começar agora
                             </Link>
                         </div>
 
@@ -311,6 +307,6 @@ export default function HomePage() {
                     </div>
                 </div>
             </section>
-        </main>
+        </div>
     )
 }
