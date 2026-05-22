@@ -6,6 +6,10 @@ import './globals.css'
 import Menu from './components/system/Menu'
 import Providers from './providers'
 import { Footer } from './components/system/Footer'
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://central-docs-app.vercel.app'),
@@ -56,7 +60,7 @@ type Props = {
 
 export default function RootLayout({ children }: Props) {
     return (
-        <html lang="pt-BR">
+        <html lang="pt-BR" className={cn("font-sans", geist.variable)}>
             <body>
                 <Providers>
                     <Menu />

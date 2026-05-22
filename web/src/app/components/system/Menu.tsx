@@ -7,6 +7,7 @@ import { GoogleLogin, CredentialResponse } from '@react-oauth/google'
 import { loginWithGoogle } from '@/app/services/auth'
 import { useAuth } from '@/app/contexts/AuthContext'
 import { useTransition } from 'react'
+import { DropdownMenuCustom } from '@/app/components/system/DropdownMenuCustom'
 
 export default function Menu() {
     const { user, login, logout, isAuthenticated } = useAuth()
@@ -55,38 +56,7 @@ export default function Menu() {
                     </Link>
 
                     {isAuthenticated && user ? (
-                        <div className="flex items-center gap-3">
-                            <button
-                                onClick={logout}
-                                className="rounded-md border border-red-500/20 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-400 transition hover:bg-red-500/20"
-                            >
-                                Sair
-                            </button>
-
-                            <div className="flex items-center gap-2 rounded-md border border-white/10 bg-container-primary px-3 py-2">
-                                {user.avatar ? (
-                                    <img
-                                        src={user.avatar}
-                                        alt={user.name}
-                                        className="h-8 w-8 rounded-full"
-                                    />
-                                ) : (
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-sm font-bold text-white">
-                                        {user.name?.charAt(0)}
-                                    </div>
-                                )}
-
-                                <div className="hidden md:block">
-                                    <p className="text-sm font-medium text-white">
-                                        {user.name}
-                                    </p>
-
-                                    <p className="text-xs text-slate-400">
-                                        {user.email}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        <DropdownMenuCustom user={user} logout={logout} />
                     ) : (
                         <div className="overflow-hidden rounded-md">
                             {isPending ? (
