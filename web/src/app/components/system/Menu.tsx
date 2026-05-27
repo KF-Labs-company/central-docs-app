@@ -2,28 +2,26 @@
 
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
+import { useMe } from '@/app/hooks/auth/useMe'
+import { useLogout } from '@/app/hooks/auth/useLogout'
+import { useGoogleLogin } from '@/app/hooks/auth/useGoogleLogin'
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google'
-
-import { loginWithGoogle } from '@/app/services/auth'
-import { useAuth } from '@/app/contexts/AuthContext'
-import { useTransition } from 'react'
 import { DropdownMenuCustom } from '@/app/components/system/DropdownMenuCustom'
 
 export default function Menu() {
-    const { user, login, logout, isAuthenticated } = useAuth()
-    const [isPending, startTransition] = useTransition()
+    const { data } = useMe()
+    const user = data?.user
+    const googleLogin = useGoogleLogin()
 
     async function handleLogin(credentialResponse: CredentialResponse) {
-        startTransition(async () => {
-            const credential = credentialResponse.credential
+        const credential = credentialResponse.credential
+        if (!credential) return
 
-            if (!credential) return
-
-            const response = await loginWithGoogle(credential)
-
-            login(response.user, response.token)
-        })
+        googleLogin.mutate(credential)
     }
+
+    const isAuthenticated = !!user
+    const logout = useLogout()
 
     return (
         <header className="sticky top-0 z-50 border-b border-white/5 bg-black/40 backdrop-blur-2xl">
@@ -59,7 +57,7 @@ export default function Menu() {
                         <DropdownMenuCustom user={user} logout={logout} />
                     ) : (
                         <div className="overflow-hidden rounded-md">
-                            {isPending ? (
+                            {googleLogin.isPending ? (
                                 <div className="flex items-center gap-2 rounded-md border border-white/10 bg-white/3 px-3 py-2 overflow-hidden relative">
                                     <div className="h-8 w-8 rounded-full bg-white/10 animate-pulse shrink-0" />
 

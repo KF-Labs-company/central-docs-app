@@ -13,6 +13,7 @@ interface DropdownMenuIconsProps {
         name: string
         email: string
         avatar?: string
+        role: string
     }
 
     logout: () => void
@@ -31,7 +32,7 @@ export function DropdownMenuCustom({ user, logout }: DropdownMenuIconsProps) {
                         />
                     ) : (
                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-sm font-bold text-white">
-                            {user.name?.charAt(0)}
+                            {user.name.charAt(0)}
                         </div>
                     )}
 
@@ -56,12 +57,17 @@ export function DropdownMenuCustom({ user, logout }: DropdownMenuIconsProps) {
                     </Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem>
-                    <Link href="/dashboard" className="flex items-center gap-2">
-                        <Icon icon="solar:chart-bold" />
-                        Dashboard
-                    </Link>
-                </DropdownMenuItem>
+                {user.role === 'admin' && (
+                    <DropdownMenuItem>
+                        <Link
+                            href="/dashboard"
+                            className="flex items-center gap-2"
+                        >
+                            <Icon icon="solar:chart-bold" />
+                            Dashboard
+                        </Link>
+                    </DropdownMenuItem>
+                )}
 
                 <DropdownMenuItem>
                     <Link
