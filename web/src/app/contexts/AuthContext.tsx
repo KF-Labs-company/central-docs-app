@@ -1,73 +1,49 @@
 'use client'
 
-import {
-    createContext,
-    useContext,
-    useEffect,
-    useState,
-    ReactNode,
-} from 'react'
+import { createContext, useContext, ReactNode } from 'react'
+import { useMe } from '../hooks/auth/useMe'
 
 type User = {
     id: string
     name: string
     email: string
     avatar?: string
+    createdAt: string
+    role: 'admin' | 'user'
 }
 
 type AuthContextType = {
     user: User | null
-    token: string | null
     isAuthenticated: boolean
-    login: (user: User, token: string) => void
-    logout: () => void
+    loading: boolean
+    login: (user: User) => void
+    logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null)
-    const [token, setToken] = useState<string | null>(null)
+    const { data, isLoading } = useMe()
 
-    useEffect(() => {
-        const storedUser = localStorage.getItem('user')
-        const storedToken = localStorage.getItem('token')
+    const user = data?.user ?? null
 
-        if (storedUser && storedUser !== 'undefined') {
-            try {
-                setUser(JSON.parse(storedUser))
-            } catch {
-                localStorage.removeItem('user')
-            }
-        }
+    const login = () => {}
 
-        if (storedToken && storedToken !== 'undefined') {
-            setToken(storedToken)
-        }
-    }, [])
+    const logout = async () => {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+            method: 'POST',
+            credentials: 'include',
+        })
 
-    const login = (user: User, token: string) => {
-        localStorage.setItem('user', JSON.stringify(user))
-        localStorage.setItem('token', token)
-
-        setUser(user)
-        setToken(token)
-    }
-
-    const logout = () => {
-        localStorage.removeItem('user')
-        localStorage.removeItem('token')
-
-        setUser(null)
-        setToken(null)
+        window.location.href = '/'
     }
 
     return (
         <AuthContext.Provider
             value={{
                 user,
-                token,
                 isAuthenticated: !!user,
+                loading: isLoading,
                 login,
                 logout,
             }}

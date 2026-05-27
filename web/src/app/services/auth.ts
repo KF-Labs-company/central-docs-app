@@ -8,6 +8,8 @@ export async function loginWithGoogle(credential: string) {
                 'Content-Type': 'application/json',
             },
 
+            credentials: 'include',
+
             body: JSON.stringify({
                 token: credential,
             }),
