@@ -1,9 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
 import { Icon } from '@iconify/react'
-
+import { useMemo, useState } from 'react'
 import { useAuth } from '@/app/contexts/AuthContext'
+import { PageHeader } from '@/app/components/system/PageHeader'
+import { useCompressPdf } from '@/app/hooks/pdf/useCompressPdf'
+import { TypewriterText } from '@/app/components/system/TypewriterText'
 
 type ResultFile = {
     blob: Blob
@@ -13,11 +15,10 @@ type ResultFile = {
 
 export default function CompressPDFPage() {
     const { isAuthenticated } = useAuth()
-
     const [file, setFile] = useState<File | null>(null)
-    const [loading, setLoading] = useState(false)
     const [result, setResult] = useState<ResultFile | null>(null)
     const [rating, setRating] = useState(0)
+    const compressPdf = useCompressPdf()
 
     const formatSize = (bytes: number) => {
         if (!bytes) return '0 KB'
@@ -32,68 +33,11 @@ export default function CompressPDFPage() {
         return ((originalSize - finalSize) / originalSize) * 100
     }, [originalSize, finalSize, result])
 
-    const getCompressionLabel = (percent: number) => {
-        if (percent > 20)
-            return {
-                label: 'Ótima compressão',
-                color: 'bg-green-400',
-            }
-
-        if (percent > 5)
-            return {
-                label: 'Compressão moderada',
-                color: 'bg-yellow-400',
-            }
-
-        if (percent > 0)
-            return {
-                label: 'Compressão leve',
-                color: 'bg-blue-400',
-            }
-
-        return {
-            label: 'Sem redução significativa',
-            color: 'bg-slate-400',
-        }
-    }
-
-    const label = getCompressionLabel(percent)
-
     const handleCompress = async () => {
         if (!file) return
 
         try {
-            setLoading(true)
-
-            const formData = new FormData()
-            formData.append('file', file)
-
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/pdf/compress`,
-                {
-                    method: 'POST',
-                    body: formData,
-                }
-            )
-
-            // 🔴 REGRA REAL VEM DO BACKEND
-            if (response.status === 403) {
-                const data = await response.json()
-
-                if (data.error === 'DAILY_LIMIT_REACHED') {
-                    alert(
-                        'Você atingiu o limite diário de compressões. Faça login para continuar.'
-                    )
-                }
-
-                return
-            }
-
-            if (!response.ok) {
-                throw new Error('Erro ao comprimir PDF')
-            }
-
-            const blob = await response.blob()
+            const blob = await compressPdf.mutateAsync(file)
             const url = URL.createObjectURL(blob)
 
             setResult({
@@ -101,10 +45,14 @@ export default function CompressPDFPage() {
                 url,
                 size: blob.size,
             })
-        } catch (error) {
-            console.error(error)
-        } finally {
-            setLoading(false)
+        } catch (err: any) {
+            if (err?.error === 'DAILY_LIMIT_REACHED') {
+                alert(
+                    'Você atingiu o limite diário. Faça login para continuar.'
+                )
+            } else {
+                alert('Erro ao comprimir PDF')
+            }
         }
     }
 
@@ -114,17 +62,22 @@ export default function CompressPDFPage() {
         setRating(0)
     }
 
+    const label =
+        percent > 20
+            ? { label: 'Ótima compressão', color: 'bg-green-400' }
+            : percent > 5
+              ? { label: 'Compressão moderada', color: 'bg-yellow-400' }
+              : percent > 0
+                ? { label: 'Compressão leve', color: 'bg-blue-400' }
+                : { label: 'Sem redução significativa', color: 'bg-slate-400' }
+
     return (
         <main className="mx-auto flex max-w-3xl flex-col gap-10 px-5 py-12 text-white">
-            <div className="flex flex-col gap-2">
-                <h1 className="text-4xl font-black">Comprimir PDF</h1>
+            <PageHeader
+                title="Comprimir PDF"
+                subTitle="Reduza o tamanho dos seus PDFs de forma rápida e gratuita."
+            />
 
-                <p className="text-slate-400">
-                    Reduza o tamanho dos seus PDFs de forma rápida e gratuita.
-                </p>
-            </div>
-
-            {/* UX de paywall */}
             {!isAuthenticated && (
                 <div className="rounded-2xl border border-yellow-500/20 bg-yellow-500/10 p-4">
                     <p className="font-medium text-yellow-300">
@@ -146,9 +99,21 @@ export default function CompressPDFPage() {
                 )}
             </div>
 
-            {!result && (
+            {compressPdf.isPending && (
+                <div className="bg-white/5 p-5 border border-white/10 rounded-md flex justify-center items-center">
+                    <TypewriterText
+                        words={[
+                            'Lendo arquivo...',
+                            'Processando...',
+                            'Comprimindo...',
+                        ]}
+                    />
+                </div>
+            )}
+
+            {!result && !compressPdf.isPending && (
                 <>
-                    <label className="flex cursor-pointer flex-col items-center justify-center rounded-3xl border border-white/10 bg-white/5 p-12 text-center transition hover:border-blue-500/30 hover:bg-white/10">
+                    <label className="flex cursor-pointer flex-col items-center justify-center rounded-md border border-white/10 bg-white/5 p-12 text-center">
                         <input
                             type="file"
                             accept="application/pdf"
@@ -183,20 +148,18 @@ export default function CompressPDFPage() {
                                 <p className="font-semibold text-white">
                                     Clique para enviar um PDF
                                 </p>
-
-                                <p className="text-sm text-slate-400">
-                                    Arraste ou selecione um arquivo
-                                </p>
                             </div>
                         )}
                     </label>
 
                     <button
-                        disabled={!file || loading}
+                        disabled={!file || compressPdf.isPending}
                         onClick={handleCompress}
                         className="rounded-2xl bg-blue-500 px-6 py-4 font-semibold transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                        {loading ? 'Comprimindo...' : 'Comprimir PDF'}
+                        {compressPdf.isPending
+                            ? 'Comprimindo...'
+                            : 'Comprimir PDF'}
                     </button>
                 </>
             )}
@@ -261,7 +224,7 @@ export default function CompressPDFPage() {
                         </a>
                     </div>
 
-                    <div className="border-t border-white/10 pt-6">
+                    {/* <div className="border-t border-white/10 pt-6">
                         <p className="mb-3 font-semibold">
                             Avalie sua experiência
                         </p>
@@ -293,7 +256,7 @@ export default function CompressPDFPage() {
                                 Obrigado pela avaliação!
                             </p>
                         )}
-                    </div>
+                    </div> */}
                 </div>
             )}
         </main>
