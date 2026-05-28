@@ -78,6 +78,13 @@ class CompressPDFService {
         catch (err) {
             console.error('trackAccess error:', err);
         }
+class CompressPDFService {
+    async execute(buffer) {
+        const pdfDoc = await pdf_lib_1.PDFDocument.load(buffer);
+        const compressedPdf = await pdfDoc.save({
+            useObjectStreams: true,
+        });
+        return Buffer.from(compressedPdf);
     }
 }
 exports.CompressPDFService = CompressPDFService;

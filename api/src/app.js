@@ -6,16 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
-const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const routes_1 = require("./routes");
-const errorHandler_1 = require("./middlewares/errorHandler");
-exports.app = (0, express_1.default)();
-exports.app.use((0, cors_1.default)({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-}));
-exports.app.use(express_1.default.json());
-exports.app.use((0, cookie_parser_1.default)());
 const routes_1 = require("./routes");
 const errorHandler_1 = require("./middlewares/errorHandler");
 exports.app = (0, express_1.default)();
@@ -23,3 +13,4 @@ exports.app.use((0, cors_1.default)());
 exports.app.use(express_1.default.json());
 exports.app.use(routes_1.routes);
 exports.app.use(errorHandler_1.errorHandler);
+//# sourceMappingURL=app.js.map

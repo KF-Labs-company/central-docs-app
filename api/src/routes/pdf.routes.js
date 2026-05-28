@@ -8,12 +8,8 @@ const express_1 = require("express");
 const multer_1 = __importDefault(require("multer"));
 const multer_2 = require("../config/multer");
 const CompressPDFController_1 = require("../controllers/pdf/CompressPDFController");
-const optionalAuthenticated_1 = require("../middlewares/optionalAuthenticated");
-const compressPDFController = new CompressPDFController_1.CompressPDFController();
-exports.pdfRoutes = (0, express_1.Router)();
-const upload = (0, multer_1.default)(multer_2.multerConfig);
-exports.pdfRoutes.post('/compress', optionalAuthenticated_1.optionalAuthenticated, upload.single('file'), compressPDFController.handle);
 const compressPDFController = new CompressPDFController_1.CompressPDFController();
 exports.pdfRoutes = (0, express_1.Router)();
 const upload = (0, multer_1.default)(multer_2.multerConfig);
 exports.pdfRoutes.post('/compress', upload.single('file'), compressPDFController.handle);
+//# sourceMappingURL=pdf.routes.js.map

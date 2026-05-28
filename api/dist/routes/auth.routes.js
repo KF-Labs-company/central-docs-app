@@ -13,3 +13,7 @@ const logoutController = new LogoutController_1.LogoutController();
 authRoutes.post('/google', googleAuthController.handle);
 authRoutes.get('/me', authController.handle);
 authRoutes.post('/logout', logoutController.handle);
+const authRoutes = (0, express_1.Router)();
+exports.authRoutes = authRoutes;
+const googleAuthController = new GoogleAuthController_1.GoogleAuthController();
+authRoutes.post('/google', googleAuthController.handle);

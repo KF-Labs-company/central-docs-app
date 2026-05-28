@@ -6,12 +6,6 @@ class CompressPDFController {
     async handle(req, res) {
         const file = req.file;
         if (!file) {
-            return res.status(400).json({ error: 'File not provided' });
-        }
-        const service = new CompressPDFService_1.CompressPDFService();
-        const userId = req.user?.id;
-        const ipAddress = req.ip;
-        const compressedPdf = await service.execute(file.buffer, userId, ipAddress);
             return res.status(400).json({
                 error: 'File not provided',
             });
@@ -24,3 +18,4 @@ class CompressPDFController {
     }
 }
 exports.CompressPDFController = CompressPDFController;
+//# sourceMappingURL=CompressPDFController.js.map

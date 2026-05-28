@@ -19,12 +19,6 @@ class GoogleAuthService {
             throw new Error('Invalid Google token');
         }
         const { sub, email, name, picture } = payload;
-        if (!email) {
-            throw new Error('Google did not send the email.');
-        }
-        let user = await prisma_1.prisma.user.findFirst({
-            where: {
-                OR: [{ googleId: sub }, { email: email }],
         let user = await prisma_1.prisma.user.findUnique({
             where: {
                 email: email,
@@ -34,10 +28,6 @@ class GoogleAuthService {
             user = await prisma_1.prisma.user.create({
                 data: {
                     googleId: sub,
-                    email,
-                    name: name || '',
-                    avatar: picture,
-                    role: 'user',
                     email: email,
                     name: name,
                     avatar: picture,
@@ -45,20 +35,6 @@ class GoogleAuthService {
             });
         }
         const authToken = jsonwebtoken_1.default.sign({
-            id: user.id,
-            role: user.role,
-            email: user.email,
-        }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        return {
-            user: {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                avatar: user.avatar,
-                role: user.role,
-                createdAt: user.createdAt,
-            },
-            authToken,
             userId: user.id,
         }, process.env.JWT_SECRET, {
             expiresIn: '7d',
@@ -70,3 +46,4 @@ class GoogleAuthService {
     }
 }
 exports.GoogleAuthService = GoogleAuthService;
+//# sourceMappingURL=GoogleAuthService.js.map
