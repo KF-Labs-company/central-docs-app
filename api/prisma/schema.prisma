@@ -1,17 +1,56 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tool {
+  id        Int          @id @default(autoincrement())
+  slug      String       @unique
+  name      String
+  isActive  Boolean      @default(true)
+  createdAt DateTime     @default(now())
+  accesses  ToolAccess[]
+
+  @@map("tools")
+}
+
+model ToolAccess {
+  id           Int          @id @default(autoincrement())
+  toolId       Int
+  userId       String?
+  ipAddress    String?
+  status       AccessStatus @default(SUCCESS)
+  errorMsg     String?
+  durationMs   Int?
+  accessedAt   DateTime     @default(now())
+  metadata     Json?
+  userSnapshot Json?        @map("user_snapshot")
+  tool         Tool         @relation(fields: [toolId], references: [id])
+  user         User?        @relation(fields: [userId], references: [id])
+
+  @@index([toolId])
+  @@index([userId])
+  @@index([accessedAt])
+  @@map("tool_accesses")
 }
 
 model User {
-    id        String   @id @default(cuid())
-    name      String
-    email     String   @unique
-    avatar    String?
-    googleId  String   @unique
-    createdAt DateTime @default(now())
+  id        String       @id @default(uuid())
+  name      String
+  email     String       @unique
+  avatar    String?
+  googleId  String       @unique
+  createdAt DateTime     @default(now())
+  role      String       @default("user")
+  accesses  ToolAccess[]
+}
+
+enum AccessStatus {
+  SUCCESS
+  ERROR
+  TIMEOUT
 }

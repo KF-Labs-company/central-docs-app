@@ -19,9 +19,13 @@ export class GoogleAuthService {
 
         const { sub, email, name, picture } = payload
 
-        let user = await prisma.user.findUnique({
+        if (!email) {
+            throw new Error('Google did not send the email.')
+        }
+
+        let user = await prisma.user.findFirst({
             where: {
-                email: email!,
+                OR: [{ googleId: sub }, { email: email }],
             },
         })
 
@@ -29,26 +33,34 @@ export class GoogleAuthService {
             user = await prisma.user.create({
                 data: {
                     googleId: sub,
-                    email: email!,
-                    name: name!,
+                    email,
+                    name: name || '',
                     avatar: picture,
+                    role: 'user',
                 },
             })
         }
 
         const authToken = jwt.sign(
             {
-                userId: user.id,
+                id: user.id,
+                role: user.role,
+                email: user.email,
             },
             process.env.JWT_SECRET!,
-            {
-                expiresIn: '7d',
-            }
+            { expiresIn: '7d' }
         )
 
         return {
-            user,
-            token: authToken,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                avatar: user.avatar,
+                role: user.role,
+                createdAt: user.createdAt,
+            },
+            authToken,
         }
     }
 }

@@ -1,8 +1,9 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { Icon } from '@iconify/react'
 import Link from 'next/link'
+import { Icon } from '@iconify/react'
+import { useMemo, useState } from 'react'
+import { PageHeader } from '@/app/components/system/PageHeader'
 
 const categories = [
     { id: 'pdf', label: 'PDF', locked: false },
@@ -19,6 +20,7 @@ const list = [
         description:
             'Reduza o tamanho dos seus arquivos PDF sem perder qualidade.',
         path: '/comprimir-pdf',
+        new: true,
     },
 ]
 
@@ -31,15 +33,10 @@ export default function ToolsPage() {
 
     return (
         <main className="mx-auto flex w-full max-w-7xl flex-col gap-12 px-5 py-12">
-            <section className="flex flex-col gap-4">
-                <h1 className="text-5xl font-black text-white">
-                    Todas as ferramentas
-                </h1>
-
-                <p className="max-w-2xl text-lg text-slate-400">
-                    Comece com PDF. Outras ferramentas serão liberadas em breve.
-                </p>
-            </section>
+            <PageHeader
+                title="Todas as ferramentas"
+                subTitle="Tudo o que você precisa em um só lugar."
+            />
 
             <section className="flex flex-wrap gap-3">
                 {categories.map((cat) => {
@@ -85,7 +82,13 @@ export default function ToolsPage() {
             <section className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {filtered.map((data) => (
                     <Link href={data.path} key={data.title}>
-                        <article className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/3 p-6 backdrop-blur-xl transition hover:-translate-y-2 hover:border-blue-500/40 hover:bg-blue-500/4 hover:cursor-pointer">
+                        <article className="group relative rounded-3xl border border-white/10 bg-white/3 p-6 backdrop-blur-xl transition hover:-translate-y-2 hover:border-blue-500/40 hover:bg-blue-500/4 hover:cursor-pointer">
+                            {data.new && (
+                                <p className="absolute -top-2 -right-2 bg-purple-800 text-white font-bold rounded-md px-2 py-1 text-sm">
+                                    Novo recurso
+                                </p>
+                            )}
+
                             <div className="flex items-center gap-2 mb-2">
                                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10">
                                     <Icon
