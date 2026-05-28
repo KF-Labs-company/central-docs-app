@@ -35,7 +35,8 @@ export class AuthService {
     async logout(res: Response) {
         res.clearCookie('token', {
             httpOnly: true,
-            sameSite: 'strict',
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'none',
         })
 
         return { success: true }
