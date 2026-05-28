@@ -1,8 +1,6 @@
-'use client'
-
 import Link from 'next/link'
 
-export default function NotFound() {
+export default function LoginRequired() {
     return (
         <div className="relative flex flex-col items-center justify-center overflow-hidden px-6 py-16">
             <div className="relative z-10 flex flex-col items-center text-center">
