@@ -14,6 +14,26 @@ export default function Updates() {
             <section className="flex flex-col gap-6">
                 <div className="flex flex-col relative gap-4 rounded-lg bg-black/30 border border-white/4 px-9 py-7">
                     <p className="absolute -top-2 -right-2 bg-purple-900 px-3 py-1 text-md font-bold rounded-md">
+                        Tag v1.1.1
+                    </p>
+                    <h2 className="text-2xl font-semibold">
+                        Release 28/05/2026
+                    </h2>
+                    <div className="flex flex-col gap-2">
+                        <div className="bg-white/6 p-5 rounded-md">
+                            <h3 className="text-lg font-medium text-slate-300">
+                                Correções
+                            </h3>
+                            <p className="text-slate-400 flex items-center gap-2">
+                                <Icon icon="ic:round-check" />
+                                Melhorias gerais de perfomance.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex flex-col relative gap-4 rounded-lg bg-black/30 border border-white/4 px-9 py-7">
+                    <p className="absolute -top-2 -right-2 bg-purple-900 px-3 py-1 text-md font-bold rounded-md">
                         Tag v1.1.0
                     </p>
                     <h2 className="text-2xl font-semibold">

@@ -3,10 +3,32 @@
 import { useState } from 'react'
 import { Icon } from '@iconify/react'
 import { cn } from '@/lib/utils'
+import dynamic from 'next/dynamic'
 
-import ChartBar from '../dashboard/bar'
-import ChartPie from '../dashboard/pie'
 import Division from './Division'
+
+const ChartBar = dynamic(() => import('../dashboard/bar'), {
+    ssr: false,
+    loading: () => (
+        <div className="flex h-full flex-col justify-center gap-6 px-2">
+            {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="flex items-center gap-4">
+                    <div className="h-4 w-24 rounded-full bg-white/4" />
+                    <div className="h-5 flex-1 rounded-full bg-white/4" />
+                </div>
+            ))}
+        </div>
+    ),
+})
+
+const ChartPie = dynamic(() => import('../dashboard/pie'), {
+    ssr: false,
+    loading: () => (
+        <div className="flex h-full items-center justify-center">
+            <div className="h-48 w-48 rounded-full bg-white/4" />
+        </div>
+    ),
+})
 
 const colSpanMap: Record<number, string> = {
     1: 'col-span-1',

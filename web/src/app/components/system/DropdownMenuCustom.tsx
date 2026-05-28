@@ -6,7 +6,7 @@ import {
     DropdownMenuTrigger,
 } from '@/app/components/ui/dropdown-menu'
 import { Icon } from '@iconify/react'
-import Link from 'next/dist/client/link'
+import Link from 'next/link'
 
 interface DropdownMenuIconsProps {
     user: {
@@ -15,7 +15,6 @@ interface DropdownMenuIconsProps {
         avatar?: string
         role: string
     }
-
     logout: () => void
 }
 
@@ -28,11 +27,13 @@ export function DropdownMenuCustom({ user, logout }: DropdownMenuIconsProps) {
                         <img
                             src={user.avatar}
                             alt={user.name}
+                            width={32}
+                            height={32}
                             className="h-8 w-8 rounded-full object-cover"
                         />
                     ) : (
                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-sm font-bold text-white">
-                            {user.name.charAt(0)}
+                            {user.name.charAt(0).toUpperCase()}
                         </div>
                     )}
 
@@ -40,14 +41,13 @@ export function DropdownMenuCustom({ user, logout }: DropdownMenuIconsProps) {
                         <p className="text-sm font-medium text-white">
                             {user.name}
                         </p>
-
                         <p className="text-xs text-slate-400">{user.email}</p>
                     </div>
                 </button>
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align="end">
-                <DropdownMenuItem>
+                <DropdownMenuItem asChild>
                     <Link
                         href="/minha-conta"
                         className="flex items-center gap-2"
@@ -58,7 +58,7 @@ export function DropdownMenuCustom({ user, logout }: DropdownMenuIconsProps) {
                 </DropdownMenuItem>
 
                 {user.role === 'admin' && (
-                    <DropdownMenuItem>
+                    <DropdownMenuItem asChild>
                         <Link
                             href="/dashboard"
                             className="flex items-center gap-2"
@@ -69,7 +69,7 @@ export function DropdownMenuCustom({ user, logout }: DropdownMenuIconsProps) {
                     </DropdownMenuItem>
                 )}
 
-                <DropdownMenuItem>
+                <DropdownMenuItem asChild>
                     <Link
                         href="/configuracoes"
                         className="flex items-center gap-2"
@@ -83,7 +83,7 @@ export function DropdownMenuCustom({ user, logout }: DropdownMenuIconsProps) {
 
                 <DropdownMenuItem
                     onClick={logout}
-                    className="bg-red-600 mt-3 hover:text-white focus:text-white hover:bg-red-500 focus:bg-red-500 transition-colors"
+                    className="mt-3 bg-red-600 transition-colors hover:bg-red-500 hover:text-white focus:bg-red-500 focus:text-white"
                 >
                     <Icon icon="majesticons:logout" />
                     Sair

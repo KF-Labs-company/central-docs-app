@@ -1,10 +1,12 @@
 'use client'
 
-import * as echarts from 'echarts'
 import dynamic from 'next/dynamic'
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), {
     ssr: false,
+    loading: () => (
+        <div className="h-full w-full animate-pulse rounded-xl bg-white/5" />
+    ),
 })
 
 type ChartBarProps = {
@@ -30,7 +32,6 @@ export default function ChartBar({ data }: ChartBarProps) {
         xAxis: {
             show: false,
             type: 'value',
-            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
             axisLine: { show: false },
             axisTick: { show: false },
             axisLabel: { color: '#8b9ab0' },
@@ -51,11 +52,18 @@ export default function ChartBar({ data }: ChartBarProps) {
                 },
                 itemStyle: {
                     borderRadius: [0, 5, 5, 0],
-                    color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
-                        { offset: 0, color: '#631d8a' },
-                        { offset: 0.5, color: '#470f66' },
-                        { offset: 1, color: '#28053b' },
-                    ]),
+                    color: {
+                        type: 'linear',
+                        x: 1,
+                        y: 0,
+                        x2: 0,
+                        y2: 0,
+                        colorStops: [
+                            { offset: 0, color: '#631d8a' },
+                            { offset: 0.5, color: '#470f66' },
+                            { offset: 1, color: '#28053b' },
+                        ],
+                    },
                 },
             },
         ],

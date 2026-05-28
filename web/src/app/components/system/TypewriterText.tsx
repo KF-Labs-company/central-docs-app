@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type TypewriterTextProps = {
     words: string[]
@@ -18,9 +18,10 @@ export function TypewriterText({
     const [text, setText] = useState('')
     const [index, setIndex] = useState(0)
     const [deleting, setDeleting] = useState(false)
+    const wordsRef = useRef(words)
 
     useEffect(() => {
-        const current = words[index]
+        const current = wordsRef.current[index]
         let timer: NodeJS.Timeout
 
         if (!deleting && text.length < current.length) {
@@ -43,19 +44,11 @@ export function TypewriterText({
 
         if (deleting && text.length === 0) {
             setDeleting(false)
-            setIndex((prev) => (prev + 1) % words.length)
+            setIndex((prev) => (prev + 1) % wordsRef.current.length)
         }
 
         return () => clearTimeout(timer)
-    }, [
-        text,
-        deleting,
-        index,
-        words,
-        typingSpeed,
-        deletingSpeed,
-        delayBetweenWords,
-    ])
+    }, [text, deleting, index, typingSpeed, deletingSpeed, delayBetweenWords])
 
     return (
         <span className="text-[20px] text-slate-400">

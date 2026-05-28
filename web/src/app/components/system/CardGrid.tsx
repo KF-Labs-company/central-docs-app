@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react'
+import { cn } from '@/lib/utils'
 
 type Tool = {
     icon: string
@@ -16,17 +17,11 @@ export default function CardGrid({ list }: CardGridProps) {
             {list.map((data) => (
                 <article
                     key={data.title}
-                    className="
-                        rounded-3xl
-                        border
-                        border-white/10
-                        bg-container-primary
-                        p-7
-                        backdrop-blur-xl
-                        transition
-                        hover:border-blue-500/30
-                        hover:bg-blue-500/3
-                    "
+                    className={cn(
+                        'rounded-3xl border border-white/10 bg-container-primary',
+                        'p-7 backdrop-blur-xl transition',
+                        'hover:border-blue-500/30 hover:bg-blue-500/3'
+                    )}
                 >
                     <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10">
                         <Icon

@@ -1,15 +1,44 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import * as echarts from 'echarts'
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), {
     ssr: false,
+    loading: () => (
+        <div className="h-full w-full animate-pulse rounded-xl bg-white/5" />
+    ),
 })
 
 type ChartPieProps = {
     data: { name: string; value: number }[]
 }
+
+const COLORS = [
+    {
+        type: 'linear',
+        x: 0,
+        y: 0,
+        x2: 1,
+        y2: 1,
+        colorStops: [
+            { offset: 0, color: '#3f8a29' },
+            { offset: 0.5, color: '#245915' },
+            { offset: 1, color: '#102e07' },
+        ],
+    },
+    {
+        type: 'linear',
+        x: 1,
+        y: 1,
+        x2: 1,
+        y2: 0,
+        colorStops: [
+            { offset: 0, color: '#8f0000' },
+            { offset: 0.5, color: '#c70000' },
+            { offset: 1, color: '#ff0000' },
+        ],
+    },
+]
 
 export default function ChartPie({ data }: ChartPieProps) {
     const option = {
@@ -20,9 +49,7 @@ export default function ChartPie({ data }: ChartPieProps) {
         legend: {
             orient: 'horizontal',
             bottom: 0,
-            textStyle: {
-                color: '#8b9ab0',
-            },
+            textStyle: { color: '#8b9ab0' },
         },
         series: [
             {
@@ -39,38 +66,12 @@ export default function ChartPie({ data }: ChartPieProps) {
                 },
                 labelLine: {
                     show: true,
-
-                    lineStyle: {
-                        color: '#8b9ab0',
-                    },
+                    lineStyle: { color: '#8b9ab0' },
                 },
                 data: data.map((item, index) => ({
                     ...item,
                     itemStyle: {
-                        color:
-                            index === 0
-                                ? new echarts.graphic.LinearGradient(
-                                      0,
-                                      0,
-                                      1,
-                                      1,
-                                      [
-                                          { offset: 0, color: '#3f8a29' },
-                                          { offset: 0.5, color: '#245915' },
-                                          { offset: 1, color: '#102e07' },
-                                      ]
-                                  )
-                                : new echarts.graphic.LinearGradient(
-                                      1,
-                                      1,
-                                      1,
-                                      0,
-                                      [
-                                          { offset: 0, color: '#8f0000' },
-                                          { offset: 0.5, color: '#c70000' },
-                                          { offset: 1, color: '#ff0000' },
-                                      ]
-                                  ),
+                        color: COLORS[index] ?? COLORS[0],
                     },
                 })),
             },
@@ -81,10 +82,7 @@ export default function ChartPie({ data }: ChartPieProps) {
         <div className="h-full w-full">
             <ReactECharts
                 option={option}
-                style={{
-                    width: '100%',
-                    height: '100%',
-                }}
+                style={{ width: '100%', height: '100%' }}
             />
         </div>
     )
